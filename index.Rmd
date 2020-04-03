@@ -1,0 +1,518 @@
+---
+title: "Evidence and statistical inference" 
+subtitle: "CCC lab meeting"
+author: "Lincoln Colling"
+date: "`r format(Sys.time(), '%d %B %Y')`"
+output:
+  xaringan::moon_reader:
+    css: [default, sussex, sussex-fonts]
+    lib_dir: libs
+    nature:
+      highlightStyle: github
+      countIncrementalSlides: false
+---
+
+
+```{r include=FALSE}
+# load packages for presentation
+require(tidyverse)
+require(bayesplay)
+require(patchwork)
+
+#source("code.R")
+load("slides.RData")
+
+```
+
+<a href="https://github.com/ljcolling/ccc" class="github-corner" aria-label="View source on GitHub"><svg width="80" height="80" viewBox="0 0 250 250" style="fill:#151513; color:#fff; position: absolute; top: 0; border: 0; right: 0;" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a><style>.github-corner:hover .octo-arm{animation:octocat-wave 560ms ease-in-out}@keyframes octocat-wave{0%,100%{transform:rotate(0)}20%,60%{transform:rotate(-25deg)}40%,80%{transform:rotate(10deg)}}@media (max-width:500px){.github-corner:hover .octo-arm{animation:none}.github-corner .octo-arm{animation:octocat-wave 560ms ease-in-out}}</style>
+
+
+## Access the slides
+
+Access the slides on your own computer at:   
+http://git.colling.net.nz/ccc
+
+
+## Access the paper 
+
+http://dx.doi.org/10.1007/s13164-018-0421-4
+
+## My course on Bayesian data analysis 
+
+http://bayes.colling.net.nz   
+First half of the course is available now, with the second half available in the next few weeks
+
+
+---
+
+# Motivation
+
+- The '*Replication Crisis*' and '*Bem affair*'<sup>1</sup> led many people to suggest that we need to **change our statistical procedures** 
+  - Specifically, switching from **frequentist** → **bayesian** methods
+
+- I thought the idea of **just** replacing one **set of statistical tools** with **another set of statistical tools** was maybe a little to simplistic
+
+- Instead I thought it would be useful to examine the **foundations** and **design features** of each approach to see how each fits into a *system of **scientific** inference*
+
+To understand how each approach to see how each fits into a *system of **scientific** inference* it's important to *understand* each approach
+
+.footnote[<sup>1</sup>Bem, D.J. 2011. Feeling the future: Experimental evidence for anomalous retroactive influences on cognition and affect. *Journal of Personality and Social Psychology* 100: 407–425. https://doi.org/10.1037/a0021524.]
+
+---
+
+# Frequentist Statistics and *p* Values
+
+The American Statistical Society defines the *p* value as:
+
+> the **probability** *under a specified **statistical model** that a statistical summary of the data (e.g., the sample mean difference between two compared groups) would be *equal to or more extreme* than its observed value<sup>1</sup>
+
+This definition contains *at least* two tricky terms: **Probability** and **statistical model**
+
+To understand this definition it useful to **unpack** these terms
+
+
+.footnote[<sup>1</sup>Wasserstein, R.L., and N.A. Lazar. 2016. The ASA’s statement on p-values: Context, process, and purpose. *The American Statistician* 70: 129–133. https://doi.org/10.1080/00031305.2016.1154108.]
+
+---
+
+# Probability and statistical models
+
+**Probability** is usually treated at a **mathematicaL** concept, but it's a **deeply philosophical** concept
+
+- A fair coin has a 50% **probability** of coming up heads
+
+- There's a 60% **probability**of rain tomorrow
+
+- There's a 90% **probability** that the accused committed the crime
+
+In each of these statements **probability** seems to be picking our different things, so it's useful to make **at least** two distinctions<sup>1</sup>
+
+
+.footnote[<sup>1</sup>There's a lot more than **two** views of probability in the philosophical literature but two (maybe three) will do for our purposes]
+
+
+---
+
+## Probability
+
+- **long run relative frequency**: Over repeated flips of the coin the relative frequency of heads will be $\frac{1}{2}$
+
+- **credence**/**degrees of support**<sup>1</sup>: I'm 90% sure that the accused committed the crime or the evidence suports the proposition that the criminal committed the crime by a factor of 9 to 1
+
+It seems sensible to conclude the the idea of **probability** in play in frequentist stats is the idea of **long run relative frequency**
+
+> the p value refers to the **relative frequency** of obtaining a statistical summary of the data as large or larger than the observed value **over hypothetical repeats of an experiment** described by a specified statistical model
+
+
+.footnote[<sup>1</sup>These two aren't **exactly** synonymous, but we can group them together for now]
+
+---
+
+## Specified statistical model
+
+- A **statistical model** simply describes what **data will be produced** understand the assumption that a **parameter has a specific value**
+
+### Building a statistical model
+
+Let's say you're interested in whether there is a difference in performance between **Condition A** and **Condition B**, how do you build a statistical model to test this difference?
+
+- Take **one condition** (either **A** or **B**), split it into **two** pseudo-conditions
+- Get participants to do the task with the two pseudo-conditions
+- Calculate the **average difference** between the two pseudo-conditions
+- Scale that measurement by a **scaling factor** of $\frac{s_{\bar{x}_{\mathrm{diff}}}}{\sqrt{n}}$
+- Repeat **heaps!**
+
+
+---
+
+```{r echo=FALSE, fig.height=7, fig.width=7, fig.align='center', fig.cap="<b>(A)</b> Mean differences from repeated experiments, <b>(B)</b> scaled mean differences from repeated experiments, and <b>(C)</b> scaled mean differences from repeated experiments as a probability density function"}
+Fig1
+```
+
+---
+
+### Features of *p* values
+
+```{r echo=FALSE, fig.height=7, fig.width=7, fig.align='center', fig.cap="Distribution of <i>p</i> values derived from the statistical model. The Distribution is <b>uniform</b> across all values of <i>p</i>"}
+Fig2
+```
+
+---
+
+```{r echo=FALSE, fig.height=7, fig.width=7, fig.align='center', fig.cap="<i>p</i> values skew more towards zero as the distribution of data shifts further from data exepcted under the <i>defined statistical model</i>"}
+Fig3
+```
+
+---
+
+
+
+# What can *p* values tell you?
+
+- *p* values are derived from the very simple idea that when you **set** a **parameter** value to a **specific** value<sup>1</sup> you can generate a **distribution** of the data you'll expect to see
+
+- From this distribution (the *sampling distribution*) you can see what would occur **more or less often** on the **assumption that the parameter has a specific value**
+
+*p* values themselves, however, are very **informationally poor**
+
+- As the **true** parameter value *deviates* from your **set value** the *distribution* of *p* values changes. 
+
+- But a **single** *p* value can't be use to **discriminate** which *distribution* you're looking at
+
+
+
+.footnote[<sup>1</sup>For *p* values the parameter is usually set to **0**. For **confidence intervals** the parameter value is set to the **observed value**. However, *p* values and **confidence intervals** are **exactly** the same idea.]
+
+---
+
+## Doing inference with *p* values
+
+Doing inference with *p* values is hard because single *p* values don't tell you much
+
+Worse still, single *p* values don't usually fit well with  **scientific inferences**
+
+### Options
+
+1. Don't collect one *p* value. Collect **many many** *p* values from repeats of the **same** experiment
+  - This will allow for **extremely accurate** inferences
+  - Difficult to do in most contexts in **cognitive science** but useful in e.g., *high energy physics*
+
+2. Try a **interrogate** a single result from **multiple perspectives**
+
+---
+
+### Interrogate from multiple perspectives
+
+The idea of interrogating from **mutliple perspectives** is the basis of ideas such as:
+
+1. The **severity principle**<sup>1</sup>
+
+2. Equivalence testing<sup>2</sup>
+
+Both of the these approaches rely on the idea of asking how **compatible** (surprising / unsurprising) a single result is with **different** parameter values. 
+
+
+.footnote[<sup>1</sup> Mayo, D. G. (2018) *Statistical inference as Severe testing*. Cambridge University Press   
+<sup>2</sup>Phillips, K.F. 1990. Power of the two one-sided tests procedure in bioequivalence. *Journal of Pharmacokinetics and Biopharmaceutics* 18: 137–144. https://doi.org/10.1007/BF01063556.]
+
+---
+
+#### The severity principle
+
+From Mayo and Spanos (2011)<sup>1</sup>:
+
+> Data $x_0$ (produced by process $G$) do not provide good evidence for the hypothesis $H$ if $x_0$ results from a test procedure with a very low probability or capacity of having uncovered the falsity of $H$, even if $H$ is incorrect
+
+Or put positively:
+
+> Data $x_0$ (produced by process $G$) provide good evidence for hypothesis $H$ (just) to the extent that test $T$ has severely passed $H$ with $x_0$.
+
+
+.footnote[<sup>1</sup>Mayo, D.G., and A. Spanos. 2011. Error statistics. In Philosophy of statistics, ed. P.S. Bandyopadhyay and M.R. Forster. Oxford.]
+
+---
+
+#### The severity principle
+
+.red[What the heck does that mean?!]
+
+```{r include=FALSE}
+# Calculating severity for a z-test
+SEV<-function(n, sigma, h0, x.bar, gamma){
+  sigma.x = sigma / sqrt(n)
+  sev = pnorm((x.bar - (h0 )) / sigma.x, mean = gamma / sigma.x)
+  M = (x.bar - (h0 + gamma))
+  tibble(sev = sev,
+         stat = M / sigma.x,
+         gamma = gamma,
+         M = M,
+         sigma.x = sigma.x) %>%
+    mutate(p.value  =pnorm(stat,lower.tail = F) )%>% return()
+
+
+}
+
+h0 = 0
+x.bar = 1
+sigma = 2
+n = 20
+SEV(n = n, sigma = sigma, h0 = h0, x.bar = x.bar, gamma = 0)
+```
+
+Simply put, severity is a property of a specific test with respect to a specific inference (or hypothesis) and some data.
+
+Let's take some data: `r n` data points with a mean of `r x.bar` and a sd of `r sigma`
+
+A one-sample *z*-test would give a (one-tailed) *p* value of `r SEV(n = n, sigma = sigma, h0 = h0, x.bar = x.bar, gamma = 0)$p.value %>% round(2)`, which means on the assumption that the parameter value is 0 this data would be surprising.
+
+But we can ask more of the data. Our *z*-test just tested a hypothesis of the form $\mathcal{H_1}:\mu > 0$ but our **scientific theory** might need $\mu$ to be of some specific (range) of magnitude(s)
+
+---
+
+#### The severity principle
+
+Using the **severity** principle we can test a **range** of other hypotheses of the form $\mathcal{H_1}:\mu > 0 + \gamma$
+
+To do this, we just change our **assumed** parameter from *0* (or any $\mu_0$) to a **range** of values of the form $\frac{\gamma}{\sigma_{\bar{x}}}$. **SEV** then equals 1 - *p* for each of these new tests
+
+
+---
+
+
+```{r echo=FALSE, fig.height=7, fig.width=10, fig.align="center", fig.cap="Severity curves for different observations"}
+
+
+
+sev_ob1 = map_df(seq(0,4,0.01), function(g) SEV(n = 20, sigma = 2, h0 = 0, x.bar = 1, gamma = g))  
+sev_ob2 = map_df(seq(0,4,0.01), function(g) SEV(n = 20, sigma = 2, h0 = 0, x.bar = 2, gamma = g))  
+sev_ob3 = map_df(seq(0,4,0.01), function(g) SEV(n = 20, sigma = 2, h0 = 0, x.bar = 3, gamma = g))  
+
+ggplot() + 
+  geom_line(sev_ob1, mapping = aes(x = gamma, y = sev, color = "1"), size = 1) + 
+  geom_line(sev_ob2, mapping = aes(x = gamma, y = sev, color = "2"), size = 1) + 
+  geom_line(sev_ob3, mapping = aes(x = gamma, y = sev, color = "3"), size = 1) +
+  scale_color_manual(values = c("darkred","darkblue","seagreen"), 
+                     labels = c("1","2","3"), name = latex2exp::TeX("observed $\\bar{x}$")) + theme_minimal(14) +
+  scale_x_continuous(name = latex2exp::TeX("$\\gamma$")) + scale_y_continuous(name = "SEV")
+```
+
+---
+
+#### The severity principle
+
+**Severity** has several advantages over simple *p* values:
+
+1. Our theories usually (or at least they should) require effects of certain magnitudes
+
+2. **Severity** is meaningful for both **statistically significant** and **non-significant**<sup>1</sup> results
+
+3. **Severity** can prevent you from making **scientifically erroneous** conclusions when dealing with **large sample sizes**
+
+.footnote[<sup>1</sup>You can think of **equivalence testing** as a special case of severity]
+
+---
+
+```{r echo=FALSE, fig.height=7, fig.width=10, fig.align="center", fig.cap="Severity curves for the same observation with different sample sizes"}
+
+
+
+sev_ob1 = map_df(seq(0,4,0.01), function(g) SEV(n = 20, sigma = 2, h0 = 0, x.bar = .9, gamma = g))  
+sev_ob2 = map_df(seq(0,4,0.01), function(g) SEV(n = 50, sigma = 2, h0 = 0, x.bar = .56, gamma = g))  
+sev_ob3 = map_df(seq(0,4,0.01), function(g) SEV(n = 200, sigma = 2, h0 = 0, x.bar = .28, gamma = g))  
+
+ggplot() + 
+  geom_line(sev_ob1, mapping = aes(x = gamma, y = sev, color = "1"), size = 1, na.rm = T ) + 
+  geom_line(sev_ob2, mapping = aes(x = gamma, y = sev, color = "2"), size = 1, na.rm = T) + 
+  geom_line(sev_ob3, mapping = aes(x = gamma, y = sev, color = "3"), size = 1, na.rm = T) +
+  scale_color_manual(values = c("darkred","darkblue","seagreen"), 
+                     labels = c("20","50","200"), name = "sample size") + theme_minimal(14) +
+  scale_x_continuous(name = latex2exp::TeX("$\\gamma$"), limits = c(0,2)) + scale_y_continuous(name = "SEV")
+```
+
+
+---
+
+
+```{r echo=FALSE, fig.height=7, fig.width=10, fig.align="center", fig.cap="Severity curves for different (non-significant) observations"}
+
+
+sev_ob1 = map_df(seq(0,4,0.01), function(g) SEV(n = 10, sigma = 2, h0 = 0, x.bar = 1, gamma = g)) %>% mutate(sev = 1 - sev)
+sev_ob2 = map_df(seq(0,4,0.01), function(g) SEV(n = 10, sigma = 2, h0 = 0, x.bar = .5, gamma = g)) %>% mutate(sev = 1 - sev)
+sev_ob3 = map_df(seq(0,4,0.01), function(g) SEV(n = 10, sigma = 2, h0 = 0, x.bar = .1, gamma = g)) %>% mutate(sev = 1 - sev)
+
+ggplot() + 
+  geom_line(sev_ob1, mapping = aes(x = gamma, y = sev, color = "1"), size = 1, na.rm = T ) + 
+  geom_line(sev_ob2, mapping = aes(x = gamma, y = sev, color = "2"), size = 1, na.rm = T) + 
+  geom_line(sev_ob3, mapping = aes(x = gamma, y = sev, color = "3"), size = 1, na.rm = T) +
+  scale_color_manual(values = c("darkred","darkblue","seagreen"), 
+                   labels = c("1","0.5","0.1"), name = latex2exp::TeX("observed $\\bar{x}$")) + theme_minimal(14) +
+  scale_x_continuous(name = latex2exp::TeX("$\\gamma$"), limits = c(0,2)) + scale_y_continuous(name = "SEV")
+```
+
+---
+
+# Alternatives to *p* values
+
+Frequentist inference is based on the idea of asking what **data** is suprising based on different **assumed** parameter values
+
+It relies on the **distributions** that **would be produced** 
+
+But sometimes we might want to ask questions about **parameter values** themselves
+
+- For example, we might want to ask whether our data $D$ provide more **evidence** for the hypothesis $\theta = \theta_1$ or $\theta = \theta_2$
+
+To answer the question we need an notion of **statistical evidence**
+
+---
+
+## A notion of statistical evidence
+
+The notion of **statistical evidence** is based on the concept of the **likelihood**
+
+The **likelihood** function asks: What is the *relative frequency* of observing our data $D$ for various of $\theta$.
+
+
+I'll walk through a simple example using data from a coin flip experiment: 
+
+- We observe 8 heads in 10 flips
+
+- We can set $\theta$ (the probability of heads) to 0.5 and then ask whether this data is surprising
+
+---
+
+```{r echo=FALSE, fig.height=7, fig.width=10, fig.align="center", fig.cap="Relative frequency of different observation on the assumption that θ = 0.5"}
+
+Fig4
+
+```
+---
+
+```{r echo=FALSE, fig.height=7, fig.width=10, fig.align="center", fig.cap="Relative frequency of our observation for various values of θ"}
+
+Fig5
+
+```
+---
+
+```{r echo=FALSE, fig.height=7, fig.width=10, fig.align="center", fig.cap="Likelihood function for our observation"}
+
+Fig6
+
+```
+---
+
+### Comparing likelihoods
+
+Comparing the relative frequency of observing our data when $\theta$ = 0.5 versus $\theta$ = 0.7 will tell us whether we have more **evidence** for the hypothesis $\theta$ = 0.5 or $\theta$ = 0.7
+
+However, our scientific hypotheses don't usually take this form:
+
+   - If theory A is true then $\theta$ = 0.5 and if theory B is true then $\theta$ = 0.7
+   
+Usually theories take the form of making **predictions** about more or less likely values of $\theta$
+
+---
+
+#### A simple example
+
+- **Theory A** predicts that biased coins show heads very often
+
+- **Theory B** predicts that biased coins show heads less often
+
+- **Theory C** predicts that biased coins show heads with frequencies fairly close to what you'd expect from fair coins
+
+We can ask whether our data is **better predicted** by each of these theories and use this as **evidence** for the theory (not just specific parameter values)
+
+The evidence for a theory is given as:
+
+$$\mathrm{Evidence} = \int_{\theta\in\Theta_H}f(\theta; \mathbf{y})p_H(\theta)d\theta$$ 
+
+---
+
+.red[But what does that mean?!]
+
+The evidence for a hypothesis is the weighted average of therelative frequency of observing the data for different values of the parameter where the weight for each value of the parameter is derived from the theory
+
+We can calculate this value for each theory and a fixed observation... but we can also vary the observations and calculate this for each observation. Doing this this gives us the **predictions** the theory generates
+
+---
+
+
+```{r echo=FALSE, fig.height=7, fig.width=10, fig.align="center", fig.cap="<b>(A)</b> Prior for Theory C, and <b>(B)</b> predictions generated by Theory C"}
+
+tibble(x = seq(0,1,length.out = 1000), y = dbeta(seq(0,1,length.out = 1000), 2, 2)) %>% 
+  ggplot(aes(x =x, y = y)) + geom_line(size = 1) + scale_y_continuous("weight") + 
+  scale_x_continuous("θ") + theme_minimal(14) -> prior
+
+marginal_func = function(theta,x)  dbinom(x = x, size = 10, prob = theta) * dbeta(x = theta, shape1 = 2, shape2 = 2)
+
+marginal_df = tibble(x = 0:10,
+marginal_prob = map_dbl(.x = 0:10, .f = function(x) integrate(f = marginal_func, lower = 0, upper = 1, x = x)$value), ob = x == 8)
+                        
+marginal_df %>% ggplot(aes(x = x, y = marginal_prob)) + geom_point(aes(alpha = ob, color = ob), size = 6) + 
+geom_line(size = 1) +  scale_alpha_manual(values = c(.5,1), guide = "none") + 
+  scale_color_manual(values = c("darkblue","seagreen"), guide = "none") +
+       scale_x_continuous(breaks = seq(0,10,2), name = "number of heads") +
+scale_y_continuous(name = "marginal probability")  + theme_minimal(14) -> predictions
+prior + predictions + plot_annotation(tag_levels = "A")
+
+```
+
+---
+
+
+#### The Bayes factor
+
+The **Bayes factor** is just calculated as the ratio of two model predictions
+
+```{r echo=FALSE, fig.height=7, fig.width=10}
+X = 8
+N = 10
+
+
+alpha_prior = 2
+beta_prior = 2
+
+marginal_func = function(theta,X,N,alpha_prior,beta_prior) 
+  dbinom(x = X, size = N, prob = theta) * dbeta(x = theta, shape1 = alpha_prior, shape2 = beta_prior)
+
+
+marginal_df = tibble(x = 0:N,
+                     marginal_prob = map_dbl(.x = 0:N, .f = function(x) integrate(f = marginal_func, lower = 0, upper = 1, 
+                                                                                  x, N, alpha_prior, beta_prior)$value), ob = x == X)
+
+marginal_df_null = tibble(x = 0:N,
+                          marginal_prob = map_dbl(.x = 0:N, .f = function(x) dbinom(x = x, size = N, prob = 0.5) * 1), ob = x == X)
+
+
+general_model_plot = marginal_df %>% ggplot(aes(x = x, y = marginal_prob)) + geom_point(aes(alpha = ob), size = 6) + 
+  geom_line(alpha = .4, size = 1) +  scale_alpha_manual(values = c(.3,1), guide = "none") +
+  scale_x_continuous(breaks = seq(0,N,2), name = "number of heads") +
+  scale_y_continuous(name = "marginal probability")  + theme_minimal(18)
+
+
+null_plot = marginal_df_null %>% ggplot(aes(x = x, y = marginal_prob)) + geom_point(aes(alpha = ob), size = 6) + 
+  geom_line(alpha = .4, size = 1) +  scale_alpha_manual(values = c(.3,1), guide = "none") +
+  scale_x_continuous(breaks = seq(0,N,2), name = "number of heads") +
+  scale_y_continuous(name = "p(Y)")  + theme_minimal(18)  
+
+bf_plot = marginal_df %>% full_join(marginal_df_null, by = c("x","ob"), suffix = c(".general",".null")) %>% 
+  mutate(BF =  marginal_prob.general / marginal_prob.null) %>% 
+  ggplot(aes(x = x, y = BF)) + geom_point(aes(alpha = ob), size = 6) + 
+  geom_line(alpha = .4, size = 1) +  scale_alpha_manual(values = c(.3,1), guide = "none") +
+  scale_x_continuous(breaks = seq(0,N,2), name = "number of heads") +
+  scale_y_continuous(name = "bayes factor", trans = "log10") + 
+  geom_hline(yintercept = 1) + theme_minimal(18)  
+
+models = ((general_model_plot + labs(title = "general model")) / 
+            null_plot + labs(title = "restricted model"))
+
+p_ranges_y <- c(ggplot_build(models[[1]])$layout$panel_scales_y[[1]]$range$range,
+                ggplot_build(models[[2]])$layout$panel_scales_y[[1]]$range$range)
+models = suppressMessages(models  & ylim(min(p_ranges_y), max(p_ranges_y)) & ylab("prob of outcome"))
+
+
+((models | (bf_plot + labs(title = "difference in prediction") )) + plot_annotation(tag_levels = "A")) &
+  theme(title = element_text(size = 14))
+```
+
+---
+
+#### The Bayes factor
+
+But is this how people use **Bayes factors**?
+
+
+Almost **universally** no
+
+- Bayes factors can be tricky to calculate<sup>1</sup> so people tend to use **of-the-shelf** solutions such as **default bayesian t-tests**<sup>2</sup> in **R** and **JASP**
+
+- These kinds of tests use **priors** (models) with particular mathematical properties that are hoped to be **widely applicable**
+
+- The **Bayes factors** aren't evidence for *hypotheses that **you** actually have*—they're **default** hypotheses (whatever that means?!)
+
+
+
+.footnote[<sup>1</sup>The **bayesplay** package (https://github.com/ljcolling/bayesplay), which I developed as a teaching tool, can be used to calculate BF for arbitrarily defined theory predictions for simple 1 parameter models   
+<sup>2</sup>Rouder, J.N., P.L. Speckman, D. Sun, R.D. Morey, and G. Iverson. 2009. Bayesian t tests for accepting and rejecting the null hypothesis. Psychonomic Bulletin & Review 16: 225–237. https://doi.org/10.3758/PBR.16.2.225.]
+

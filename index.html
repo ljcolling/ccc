@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>Evidence and statistical inference</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Lincoln Colling" />
+    <meta name="date" content="2020-04-03" />
+    <link href="libs/remark-css-0.0.1/default.css" rel="stylesheet" />
+    <link href="libs/remark-css-0.0.1/sussex.css" rel="stylesheet" />
+    <link href="libs/remark-css-0.0.1/sussex-fonts.css" rel="stylesheet" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+# Evidence and statistical inference
+## CCC lab meeting
+### Lincoln Colling
+### 03 April 2020
+
+---
+
+
+
+
+
+&lt;a href="https://github.com/ljcolling/ccc" class="github-corner" aria-label="View source on GitHub"&gt;&lt;svg width="80" height="80" viewBox="0 0 250 250" style="fill:#151513; color:#fff; position: absolute; top: 0; border: 0; right: 0;" aria-hidden="true"&gt;&lt;path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"&gt;&lt;/path&gt;&lt;path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"&gt;&lt;/path&gt;&lt;path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;&lt;style&gt;.github-corner:hover .octo-arm{animation:octocat-wave 560ms ease-in-out}@keyframes octocat-wave{0%,100%{transform:rotate(0)}20%,60%{transform:rotate(-25deg)}40%,80%{transform:rotate(10deg)}}@media (max-width:500px){.github-corner:hover .octo-arm{animation:none}.github-corner .octo-arm{animation:octocat-wave 560ms ease-in-out}}&lt;/style&gt;
+
+
+## Access the slides
+
+Access the slides on your own computer at:   
+http://git.colling.net.nz/ccc
+
+
+## Access the paper 
+
+http://dx.doi.org/10.1007/s13164-018-0421-4
+
+## My course on Bayesian data analysis 
+
+http://bayes.colling.net.nz   
+First half of the course is available now, with the second half available in the next few weeks
+
+
+---
+
+# Motivation
+
+- The '*Replication Crisis*' and '*Bem affair*'&lt;sup&gt;1&lt;/sup&gt; led many people to suggest that we need to **change our statistical procedures** 
+  - Specifically, switching from **frequentist** → **bayesian** methods
+
+- I thought the idea of **just** replacing one **set of statistical tools** with **another set of statistical tools** was maybe a little to simplistic
+
+- Instead I thought it would be useful to examine the **foundations** and **design features** of each approach to see how each fits into a *system of **scientific** inference*
+
+To understand how each approach to see how each fits into a *system of **scientific** inference* it's important to *understand* each approach
+
+.footnote[&lt;sup&gt;1&lt;/sup&gt;Bem, D.J. 2011. Feeling the future: Experimental evidence for anomalous retroactive influences on cognition and affect. *Journal of Personality and Social Psychology* 100: 407–425. https://doi.org/10.1037/a0021524.]
+
+---
+
+# Frequentist Statistics and *p* Values
+
+The American Statistical Society defines the *p* value as:
+
+&gt; the **probability** *under a specified **statistical model** that a statistical summary of the data (e.g., the sample mean difference between two compared groups) would be *equal to or more extreme* than its observed value&lt;sup&gt;1&lt;/sup&gt;
+
+This definition contains *at least* two tricky terms: **Probability** and **statistical model**
+
+To understand this definition it useful to **unpack** these terms
+
+
+.footnote[&lt;sup&gt;1&lt;/sup&gt;Wasserstein, R.L., and N.A. Lazar. 2016. The ASA’s statement on p-values: Context, process, and purpose. *The American Statistician* 70: 129–133. https://doi.org/10.1080/00031305.2016.1154108.]
+
+---
+
+# Probability and statistical models
+
+**Probability** is usually treated at a **mathematicaL** concept, but it's a **deeply philosophical** concept
+
+- A fair coin has a 50% **probability** of coming up heads
+
+- There's a 60% **probability**of rain tomorrow
+
+- There's a 90% **probability** that the accused committed the crime
+
+In each of these statements **probability** seems to be picking our different things, so it's useful to make **at least** two distinctions&lt;sup&gt;1&lt;/sup&gt;
+
+
+.footnote[&lt;sup&gt;1&lt;/sup&gt;There's a lot more than **two** views of probability in the philosophical literature but two (maybe three) will do for our purposes]
+
+
+---
+
+## Probability
+
+- **long run relative frequency**: Over repeated flips of the coin the relative frequency of heads will be `\(\frac{1}{2}\)`
+
+- **credence**/**degrees of support**&lt;sup&gt;1&lt;/sup&gt;: I'm 90% sure that the accused committed the crime or the evidence suports the proposition that the criminal committed the crime by a factor of 9 to 1
+
+It seems sensible to conclude the the idea of **probability** in play in frequentist stats is the idea of **long run relative frequency**
+
+&gt; the p value refers to the **relative frequency** of obtaining a statistical summary of the data as large or larger than the observed value **over hypothetical repeats of an experiment** described by a specified statistical model
+
+
+.footnote[&lt;sup&gt;1&lt;/sup&gt;These two aren't **exactly** synonymous, but we can group them together for now]
+
+---
+
+## Specified statistical model
+
+- A **statistical model** simply describes what **data will be produced** understand the assumption that a **parameter has a specific value**
+
+### Building a statistical model
+
+Let's say you're interested in whether there is a difference in performance between **Condition A** and **Condition B**, how do you build a statistical model to test this difference?
+
+- Take **one condition** (either **A** or **B**), split it into **two** pseudo-conditions
+- Get participants to do the task with the two pseudo-conditions
+- Calculate the **average difference** between the two pseudo-conditions
+- Scale that measurement by a **scaling factor** of `\(\frac{s_{\bar{x}_{\mathrm{diff}}}}{\sqrt{n}}\)`
+- Repeat **heaps!**
+
+
+---
+
+&lt;div class="figure" style="text-align: center"&gt;
+&lt;img src="index_files/figure-html/unnamed-chunk-2-1.png" alt="&amp;lt;b&amp;gt;(A)&amp;lt;/b&amp;gt; Mean differences from repeated experiments, &amp;lt;b&amp;gt;(B)&amp;lt;/b&amp;gt; scaled mean differences from repeated experiments, and &amp;lt;b&amp;gt;(C)&amp;lt;/b&amp;gt; scaled mean differences from repeated experiments as a probability density function"  /&gt;
+&lt;p class="caption"&gt;&lt;b&gt;(A)&lt;/b&gt; Mean differences from repeated experiments, &lt;b&gt;(B)&lt;/b&gt; scaled mean differences from repeated experiments, and &lt;b&gt;(C)&lt;/b&gt; scaled mean differences from repeated experiments as a probability density function&lt;/p&gt;
+&lt;/div&gt;
+
+---
+
+### Features of *p* values
+
+&lt;div class="figure" style="text-align: center"&gt;
+&lt;img src="index_files/figure-html/unnamed-chunk-3-1.png" alt="Distribution of &amp;lt;i&amp;gt;p&amp;lt;/i&amp;gt; values derived from the statistical model. The Distribution is &amp;lt;b&amp;gt;uniform&amp;lt;/b&amp;gt; across all values of &amp;lt;i&amp;gt;p&amp;lt;/i&amp;gt;"  /&gt;
+&lt;p class="caption"&gt;Distribution of &lt;i&gt;p&lt;/i&gt; values derived from the statistical model. The Distribution is &lt;b&gt;uniform&lt;/b&gt; across all values of &lt;i&gt;p&lt;/i&gt;&lt;/p&gt;
+&lt;/div&gt;
+
+---
+
+&lt;div class="figure" style="text-align: center"&gt;
+&lt;img src="index_files/figure-html/unnamed-chunk-4-1.png" alt="&amp;lt;i&amp;gt;p&amp;lt;/i&amp;gt; values skew more towards zero as the distribution of data shifts further from data exepcted under the &amp;lt;i&amp;gt;defined statistical model&amp;lt;/i&amp;gt;"  /&gt;
+&lt;p class="caption"&gt;&lt;i&gt;p&lt;/i&gt; values skew more towards zero as the distribution of data shifts further from data exepcted under the &lt;i&gt;defined statistical model&lt;/i&gt;&lt;/p&gt;
+&lt;/div&gt;
+
+---
+
+
+
+# What can *p* values tell you?
+
+- *p* values are derived from the very simple idea that when you **set** a **parameter** value to a **specific** value&lt;sup&gt;1&lt;/sup&gt; you can generate a **distribution** of the data you'll expect to see
+
+- From this distribution (the *sampling distribution*) you can see what would occur **more or less often** on the **assumption that the parameter has a specific value**
+
+*p* values themselves, however, are very **informationally poor**
+
+- As the **true** parameter value *deviates* from your **set value** the *distribution* of *p* values changes. 
+
+- But a **single** *p* value can't be use to **discriminate** which *distribution* you're looking at
+
+
+
+.footnote[&lt;sup&gt;1&lt;/sup&gt;For *p* values the parameter is usually set to **0**. For **confidence intervals** the parameter value is set to the **observed value**. However, *p* values and **confidence intervals** are **exactly** the same idea.]
+
+---
+
+## Doing inference with *p* values
+
+Doing inference with *p* values is hard because single *p* values don't tell you much
+
+Worse still, single *p* values don't usually fit well with  **scientific inferences**
+
+### Options
+
+1. Don't collect one *p* value. Collect **many many** *p* values from repeats of the **same** experiment
+  - This will allow for **extremely accurate** inferences
+  - Difficult to do in most contexts in **cognitive science** but useful in e.g., *high energy physics*
+
+2. Try a **interrogate** a single result from **multiple perspectives**
+
+---
+
+### Interrogate from multiple perspectives
+
+The idea of interrogating from **mutliple perspectives** is the basis of ideas such as:
+
+1. The **severity principle**&lt;sup&gt;1&lt;/sup&gt;
+
+2. Equivalence testing&lt;sup&gt;2&lt;/sup&gt;
+
+Both of the these approaches rely on the idea of asking how **compatible** (surprising / unsurprising) a single result is with **different** parameter values. 
+
+
+.footnote[&lt;sup&gt;1&lt;/sup&gt; Mayo, D. G. (2018) *Statistical inference as Severe testing*. Cambridge University Press   
+&lt;sup&gt;2&lt;/sup&gt;Phillips, K.F. 1990. Power of the two one-sided tests procedure in bioequivalence. *Journal of Pharmacokinetics and Biopharmaceutics* 18: 137–144. https://doi.org/10.1007/BF01063556.]
+
+---
+
+#### The severity principle
+
+From Mayo and Spanos (2011)&lt;sup&gt;1&lt;/sup&gt;:
+
+&gt; Data `\(x_0\)` (produced by process `\(G\)`) do not provide good evidence for the hypothesis `\(H\)` if `\(x_0\)` results from a test procedure with a very low probability or capacity of having uncovered the falsity of `\(H\)`, even if `\(H\)` is incorrect
+
+Or put positively:
+
+&gt; Data `\(x_0\)` (produced by process `\(G\)`) provide good evidence for hypothesis `\(H\)` (just) to the extent that test `\(T\)` has severely passed `\(H\)` with `\(x_0\)`.
+
+
+.footnote[&lt;sup&gt;1&lt;/sup&gt;Mayo, D.G., and A. Spanos. 2011. Error statistics. In Philosophy of statistics, ed. P.S. Bandyopadhyay and M.R. Forster. Oxford.]
+
+---
+
+#### The severity principle
+
+.red[What the heck does that mean?!]
+
+
+
+Simply put, severity is a property of a specific test with respect to a specific inference (or hypothesis) and some data.
+
+Let's take some data: 20 data points with a mean of 1 and a sd of 2
+
+A one-sample *z*-test would give a (one-tailed) *p* value of 0.01, which means on the assumption that the parameter value is 0 this data would be surprising.
+
+But we can ask more of the data. Our *z*-test just tested a hypothesis of the form `\(\mathcal{H_1}:\mu &gt; 0\)` but our **scientific theory** might need `\(\mu\)` to be of some specific (range) of magnitude(s)
+
+---
+
+#### The severity principle
+
+Using the **severity** principle we can test a **range** of other hypotheses of the form `\(\mathcal{H_1}:\mu &gt; 0 + \gamma\)`
+
+To do this, we just change our **assumed** parameter from *0* (or any `\(\mu_0\)`) to a **range** of values of the form `\(\frac{\gamma}{\sigma_{\bar{x}}}\)`. **SEV** then equals 1 - *p* for each of these new tests
+
+
+---
+
+
+&lt;div class="figure" style="text-align: center"&gt;
+&lt;img src="index_files/figure-html/unnamed-chunk-6-1.png" alt="Severity curves for different observations"  /&gt;
+&lt;p class="caption"&gt;Severity curves for different observations&lt;/p&gt;
+&lt;/div&gt;
+
+---
+
+#### The severity principle
+
+**Severity** has several advantages over simple *p* values:
+
+1. Our theories usually (or at least they should) require effects of certain magnitudes
+
+2. **Severity** is meaningful for both **statistically significant** and **non-significant**&lt;sup&gt;1&lt;/sup&gt; results
+
+3. **Severity** can prevent you from making **scientifically erroneous** conclusions when dealing with **large sample sizes**
+
+.footnote[&lt;sup&gt;1&lt;/sup&gt;You can think of **equivalence testing** as a special case of severity]
+
+---
+
+&lt;div class="figure" style="text-align: center"&gt;
+&lt;img src="index_files/figure-html/unnamed-chunk-7-1.png" alt="Severity curves for the same observation with different sample sizes"  /&gt;
+&lt;p class="caption"&gt;Severity curves for the same observation with different sample sizes&lt;/p&gt;
+&lt;/div&gt;
+
+
+---
+
+
+&lt;div class="figure" style="text-align: center"&gt;
+&lt;img src="index_files/figure-html/unnamed-chunk-8-1.png" alt="Severity curves for different (non-significant) observations"  /&gt;
+&lt;p class="caption"&gt;Severity curves for different (non-significant) observations&lt;/p&gt;
+&lt;/div&gt;
+
+---
+
+# Alternatives to *p* values
+
+Frequentist inference is based on the idea of asking what **data** is suprising based on different **assumed** parameter values
+
+It relies on the **distributions** that **would be produced** 
+
+But sometimes we might want to ask questions about **parameter values** themselves
+
+- For example, we might want to ask whether our data `\(D\)` provide more **evidence** for the hypothesis `\(\theta = \theta_1\)` or `\(\theta = \theta_2\)`
+
+To answer the question we need an notion of **statistical evidence**
+
+---
+
+## A notion of statistical evidence
+
+The notion of **statistical evidence** is based on the concept of the **likelihood**
+
+The **likelihood** function asks: What is the *relative frequency* of observing our data `\(D\)` for various of `\(\theta\)`.
+
+
+I'll walk through a simple example using data from a coin flip experiment: 
+
+- We observe 8 heads in 10 flips
+
+- We can set `\(\theta\)` (the probability of heads) to 0.5 and then ask whether this data is surprising
+
+---
+
+&lt;div class="figure" style="text-align: center"&gt;
+&lt;img src="index_files/figure-html/unnamed-chunk-9-1.png" alt="Relative frequency of different observation on the assumption that θ = 0.5"  /&gt;
+&lt;p class="caption"&gt;Relative frequency of different observation on the assumption that θ = 0.5&lt;/p&gt;
+&lt;/div&gt;
+---
+
+&lt;div class="figure" style="text-align: center"&gt;
+&lt;img src="index_files/figure-html/unnamed-chunk-10-1.png" alt="Relative frequency of our observation for various values of θ"  /&gt;
+&lt;p class="caption"&gt;Relative frequency of our observation for various values of θ&lt;/p&gt;
+&lt;/div&gt;
+---
+
+&lt;div class="figure" style="text-align: center"&gt;
+&lt;img src="index_files/figure-html/unnamed-chunk-11-1.png" alt="Likelihood function for our observation"  /&gt;
+&lt;p class="caption"&gt;Likelihood function for our observation&lt;/p&gt;
+&lt;/div&gt;
+---
+
+### Comparing likelihoods
+
+Comparing the relative frequency of observing our data when `\(\theta\)` = 0.5 versus `\(\theta\)` = 0.7 will tell us whether we have more **evidence** for the hypothesis `\(\theta\)` = 0.5 or `\(\theta\)` = 0.7
+
+However, our scientific hypotheses don't usually take this form:
+
+   - If theory A is true then `\(\theta\)` = 0.5 and if theory B is true then `\(\theta\)` = 0.7
+   
+Usually theories take the form of making **predictions** about more or less likely values of `\(\theta\)`
+
+---
+
+#### A simple example
+
+- **Theory A** predicts that biased coins show heads very often
+
+- **Theory B** predicts that biased coins show heads less often
+
+- **Theory C** predicts that biased coins show heads with frequencies fairly close to what you'd expect from fair coins
+
+We can ask whether our data is **better predicted** by each of these theories and use this as **evidence** for the theory (not just specific parameter values)
+
+The evidence for a theory is given as:
+
+`$$\mathrm{Evidence} = \int_{\theta\in\Theta_H}f(\theta; \mathbf{y})p_H(\theta)d\theta$$` 
+
+---
+
+.red[But what does that mean?!]
+
+The evidence for a hypothesis is the weighted average of therelative frequency of observing the data for different values of the parameter where the weight for each value of the parameter is derived from the theory
+
+We can calculate this value for each theory and a fixed observation... but we can also vary the observations and calculate this for each observation. Doing this this gives us the **predictions** the theory generates
+
+---
+
+
+&lt;div class="figure" style="text-align: center"&gt;
+&lt;img src="index_files/figure-html/unnamed-chunk-12-1.png" alt="&amp;lt;b&amp;gt;(A)&amp;lt;/b&amp;gt; Prior for Theory C, and &amp;lt;b&amp;gt;(B)&amp;lt;/b&amp;gt; predictions generated by Theory C"  /&gt;
+&lt;p class="caption"&gt;&lt;b&gt;(A)&lt;/b&gt; Prior for Theory C, and &lt;b&gt;(B)&lt;/b&gt; predictions generated by Theory C&lt;/p&gt;
+&lt;/div&gt;
+
+---
+
+
+#### The Bayes factor
+
+The **Bayes factor** is just calculated as the ratio of two model predictions
+
+![](index_files/figure-html/unnamed-chunk-13-1.png)&lt;!-- --&gt;
+
+---
+
+#### The Bayes factor
+
+But is this how people use **Bayes factors**?
+
+
+Almost **universally** no
+
+- Bayes factors can be tricky to calculate&lt;sup&gt;1&lt;/sup&gt; so people tend to use **of-the-shelf** solutions such as **default bayesian t-tests**&lt;sup&gt;2&lt;/sup&gt; in **R** and **JASP**
+
+- These kinds of tests use **priors** (models) with particular mathematical properties that are hoped to be **widely applicable**
+
+- The **Bayes factors** aren't evidence for *hypotheses that **you** actually have*—they're **default** hypotheses (whatever that means?!)
+
+
+
+.footnote[&lt;sup&gt;1&lt;/sup&gt;The **bayesplay** package (https://github.com/ljcolling/bayesplay), which I developed as a teaching tool, can be used to calculate BF for arbitrarily defined theory predictions for simple 1 parameter models   
+&lt;sup&gt;2&lt;/sup&gt;Rouder, J.N., P.L. Speckman, D. Sun, R.D. Morey, and G. Iverson. 2009. Bayesian t tests for accepting and rejecting the null hypothesis. Psychonomic Bulletin &amp; Review 16: 225–237. https://doi.org/10.3758/PBR.16.2.225.]
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "github",
+"countIncrementalSlides": false
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();</script>
+
+<script>
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>
