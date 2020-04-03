@@ -18,7 +18,6 @@ output:
 require(tidyverse)
 require(bayesplay)
 require(patchwork)
-
 #source("code.R")
 load("slides.RData")
 
@@ -515,4 +514,36 @@ Almost **universally** no
 
 .footnote[<sup>1</sup>The **bayesplay** package (https://github.com/ljcolling/bayesplay), which I developed as a teaching tool, can be used to calculate BF for arbitrarily defined theory predictions for simple 1 parameter models   
 <sup>2</sup>Rouder, J.N., P.L. Speckman, D. Sun, R.D. Morey, and G. Iverson. 2009. Bayesian t tests for accepting and rejecting the null hypothesis. Psychonomic Bulletin & Review 16: 225–237. https://doi.org/10.3758/PBR.16.2.225.]
+
+---
+
+# Two approaches to error and evidence
+
+- <u>Frequentatist</u> inference is primarily concerned with the notion of **error** 
+
+  - If you know what **data** is likely to be produced **understand certain assumptions** then you can control *how often* you conclude that some data is **suprising**
+  
+  - You can use **surprise** and **error** to learn about the world
+  
+- <u>Bayesian</u> inference is primarily concern with the notion of **evidence**
+
+  - If you have **theories** that make **predictions** you can ask whether data provides **evidence** for one theory or another
+
+---
+
+## Different approaches for different contexts?
+
+Often in cognitive science we don't have theories that make **predictions**, except at a very very **course level**—this is probably a very bad thing, but that's simply the state of the world
+
+Testing different **predictions** can be hard if we don't have the **predictions**
+
+Often we're just trying to find **deviations** in noise—Frequentist inference is good for finding **deviations in noise**
+
+But the kind of experiments we do in cognitive science (compared with, e.g., high energy physics) are not great for findings **deviations in noise**
+
+We really need to think more about the **kind of statistical questions** we ask, the **contexts** we ask them in, and how they fit with the **kind of scientific questions** we want to answer
+
+---
+
+<div class="middle">The end</div>
 
